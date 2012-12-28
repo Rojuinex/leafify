@@ -5,7 +5,7 @@
 
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * #
 # Created using Sam Hocevar's <sam@hocevar.net> Leafify Script as a refrence. #
-# Original script contributed by FergusL and                                  #
+# Original script contributed by FergusL and Aiena                            #
 # contactable at #blenderpython @ irc.freenode.net                            #
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * #
 
