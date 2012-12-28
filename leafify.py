@@ -84,9 +84,9 @@ class LeafifyPanel(bpy.types.Panel):
 		row.operator("mesh.leafify", icon = "UV_VERTEXSEL")
 
 def add_object_manual_map():
-	url_manual_prefix = "http://github.com/Rojuinex/leafify"
+	url_manual_prefix = "https://github.com/Rojuinex/leafify#"
 	url_manual_mapping = (
-		("bpy.ops.mesh.leafify", "#usage"),
+		("bpy.ops.mesh.leafify", "usage"),
 		) 
 	return url_manual_prefix, url_manual_mapping
 
