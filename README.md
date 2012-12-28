@@ -16,7 +16,7 @@ Settings are currently found in the toolshelf.
 
 ### Credits
 
-Leafify was originally created by  
+Leafify was originally created by [Sam Hocevar](mailto:sam@hocevar.net) with contributions from FergusL and Aiena (#blenderpython @ irc.freenode.net).
 
 ___
 
