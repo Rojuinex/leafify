@@ -104,6 +104,9 @@ class OBJECT_OT_leafify(bpy.types.Operator):
 	# end of execute
 
 	def invoke(self, context, event):
+		self.leafify_offset  = context.scene.leafify_offset
+		self.leafify_normal  = context.scene.leafify_normal
+		self.leafify_preflip = context.scene.leafify_preflip
 		self.action_common(context)
 		return {"FINISHED"}
 	# end of invoke
