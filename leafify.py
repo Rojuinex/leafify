@@ -29,9 +29,9 @@ from mathutils import Vector
 class OBJECT_OT_leafify(bpy.types.Operator):
 	"""Duplicates and flips selected faces to replicate dual-sided mesehs"""
 
-	bl_idname  = "mesh.leafify"
-	bl_label   = "Leafify"
-	bl_options = {"REGISTER", "UNDO"}
+	bl_idname      = "mesh.leafify"
+	bl_label       = "Leafify"
+	bl_options     = {"REGISTER", "UNDO"}
 
 	leafify_offset = bpy.props.FloatVectorProperty(
 		name        = "Transformation Offset",
@@ -49,16 +49,30 @@ class OBJECT_OT_leafify(bpy.types.Operator):
 	)
   
 	leafify_preflip = bpy.props.BoolProperty(
-		name        = "Preflip Normals",
+		name        = "Flip Original Normals",
 		default     = True,
-		description = "Flip original face normals before running leafify."
+		description = "Flip original face normals"
 	)
+
+	@classmethod
+	def poll(self, context):
+		if context.active_object == None:
+			return False
+
+		# TODO: Check to see if faces are selected
+
+		if context.mode == 'EDIT_MESH':
+			return True
+
+		return False
 
 	def draw(self, context):
 		col = self.layout.column(align = True)
+		row = self.layout.row()
+		row.label("Plese use non-zero values.", icon='NONE')
 		col.prop(self, "leafify_preflip")
+		col.prop(self, "leafify_normal")
 		col.prop(self, "leafify_offset")
-		#col.prop(self, "leafify_normal")
 	# end of draw
 
 	def action_common(self, context):
@@ -123,9 +137,10 @@ class LeafifyPanel(bpy.types.Panel):
 	def draw(self, context):
 		layout = self.layout
 		col    = layout.column()
+		col.label("Plese use non-zero values.", icon='NONE')
 		col.prop(context.scene, "leafify_preflip")
+		col.prop(context.scene, "leafify_normal")
 		col.prop(context.scene, "leafify_offset")
-		#col.prop(context.scene, "leafify_normal")
 		row    = layout.row()
 		row.operator("mesh.leafify", icon = "UV_VERTEXSEL")
 
@@ -157,9 +172,9 @@ def register():
 	)
 
 	bpy.types.Scene.leafify_preflip = bpy.props.BoolProperty(
-		name        = "Preflip Normals",
+		name        = "Flip Original Normals",
 		default     = True,
-		description = "Flip original face normals before running leafify."
+		description = "Flip original face normals"
 	)
 
 
