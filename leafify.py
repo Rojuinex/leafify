@@ -1,5 +1,5 @@
 # Author: Rojuienx <rojuinex@gmail.com http://github.com/rojuinex>
-# Version: 0.0.2
+# Version: 0.0.3
 # Date Created: December 28th, 2012
 # Copyright (c) 2012, Rojuinex (See license agreement)
 
@@ -9,10 +9,10 @@
 # contactable at #blenderpython @ irc.freenode.net                            #
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * #
 
-bl_info = { 
+bl_info = {
 	"name":         "Leafify", 
 	"author":       "Rojuienx <rojuinex@gmail.com>",
-	"version":      (0, 0, 2),
+	"version":      (0, 0, 3),
 	"blender":      (2, 6, 5),
 	"location":     "View3D > Tools",
 	"description":  "Creates double sided faces.  Located in toolshelf and spacebar leafify",
@@ -20,7 +20,7 @@ bl_info = {
 	"wiki_url":     "https://github.com/Rojuinex/leafify",
 	"tracker_url":  "https://github.com/Rojuinex/leafify/issues",
 	"category":     "Mesh"
-} 
+}
 
 import bpy
 import bmesh
@@ -41,17 +41,17 @@ class OBJECT_OT_leafify(bpy.types.Operator):
 		#min         = 0.0,
 		soft_min    = 0.0
 	)
-  
-	leafify_normal = bpy.props.BoolProperty(
-		name        = "Respect Normals",
-		default     = False,
-		description = "Transform with respect to face normals."
-	)
-  
+
 	leafify_preflip = bpy.props.BoolProperty(
 		name        = "Flip Original Normals",
 		default     = True,
 		description = "Flip original face normals"
+	)
+
+	leafify_allow_zero = bpy.props.BoolProperty(
+		name        = "Allow Zero",
+		default     = False,
+		description = "Don't warn about non-zero values."
 	)
 
 	@classmethod
@@ -67,16 +67,15 @@ class OBJECT_OT_leafify(bpy.types.Operator):
 		return False
 
 	def draw(self, context):
-		col = self.layout.column(align = True)
-		row = self.layout.row()
-		row.label("Plese use non-zero values.", icon='NONE')
+		col = self.layout.column()
+		col.label("Plese use a non-zero vector.", icon='NONE')
 		col.prop(self, "leafify_preflip")
-		col.prop(self, "leafify_normal")
 		col.prop(self, "leafify_offset")
+		col.prop(self, "leafify_allow_zero")
 	# end of draw
 
 	def action_common(self, context):
-		if self.leafify_offset == Vector((0.0, 0.0, 0.0)) :
+		if self.leafify_offset == Vector((0.0, 0.0, 0.0)) and not self.leafify_allow_zero:
 			self.report({"ERROR"}, "Please use non-zero values.")
 		else :
 			if self.leafify_preflip == True:
@@ -118,9 +117,10 @@ class OBJECT_OT_leafify(bpy.types.Operator):
 	# end of execute
 
 	def invoke(self, context, event):
-		self.leafify_offset  = context.scene.leafify_offset
-		self.leafify_normal  = context.scene.leafify_normal
-		self.leafify_preflip = context.scene.leafify_preflip
+		self.leafify_offset     = context.scene.leafify_offset
+		self.leafify_normal     = context.scene.leafify_normal
+		self.leafify_preflip    = context.scene.leafify_preflip
+		self.leafify_allow_zero = context.scene.leafify_allow_zero
 		self.action_common(context)
 		return {"FINISHED"}
 	# end of invoke
@@ -137,10 +137,10 @@ class LeafifyPanel(bpy.types.Panel):
 	def draw(self, context):
 		layout = self.layout
 		col    = layout.column()
-		col.label("Plese use non-zero values.", icon='NONE')
+		col.label("Plese use a non-zero vector.", icon='NONE')
 		col.prop(context.scene, "leafify_preflip")
-		col.prop(context.scene, "leafify_normal")
 		col.prop(context.scene, "leafify_offset")
+		col.prop(context.scene, "leafify_allow_zero")
 		row    = layout.row()
 		row.operator("mesh.leafify", icon = "UV_VERTEXSEL")
 
@@ -165,16 +165,16 @@ def register():
 		soft_min    = 0.0
 	)
 
-	bpy.types.Scene.leafify_normal  = bpy.props.BoolProperty(
-		name        = "Respect Normals",
-		default     = False,
-		description = "Transform with respect to face normals."
-	)
-
 	bpy.types.Scene.leafify_preflip = bpy.props.BoolProperty(
 		name        = "Flip Original Normals",
 		default     = True,
 		description = "Flip original face normals"
+	)
+
+	bpy.types.Scene.leafify_allow_zero = bpy.props.BoolProperty(
+		name        = "Allow Zero",
+		default     = False,
+		description = "Don't warn about non-zero values."
 	)
 
 
