@@ -19,7 +19,7 @@ bl_info = {
 	"warning":      "Currently in Beta",
 	"wiki_url":     "https://github.com/Rojuinex/leafify",
 	"tracker_url":  "https://github.com/Rojuinex/leafify/issues",
-	"category":     "Add Mesh"
+	"category":     "Mesh"
 } 
 
 import bpy
@@ -27,14 +27,23 @@ import bmesh
 from mathutils import Vector
 
 def leafify(self, context):
+
+	if context.scene.leafify_preflip == True:
+		bpy.ops.mesh.flip_normals()
+
 	offset = context.scene.leafify_offset
 
+	orientation = "GLOBAL"
+
+	if context.scene.leafify_normal == True:
+		orientation = "NORMAL"
+
 	bpy.ops.mesh.duplicate_move(
-		MESH_OT_duplicate = {"mode":1}, 
+		MESH_OT_duplicate      = {"mode":1}, 
 		TRANSFORM_OT_translate = {
 			"value":                      offset,
 			"constraint_axis":            (False, False, False),
-			"constraint_orientation":     "GLOBAL",
+			"constraint_orientation":     orientation,
 			"mirror":                     False,
 			"proportional":               "DISABLED",
 			"proportional_edit_falloff":  "SMOOTH",
@@ -79,7 +88,9 @@ class LeafifyPanel(bpy.types.Panel):
 	def draw(self, context):
 		layout = self.layout
 		col    = layout.column()
+		col.prop(context.scene, "leafify_preflip")
 		col.prop(context.scene, "leafify_offset")
+		#col.prop(context.scene, "leafify_normal")
 		row    = layout.row()
 		row.operator("mesh.leafify", icon = "UV_VERTEXSEL")
 
@@ -95,13 +106,26 @@ def register():
 	bpy.utils.register_manual_map(add_object_manual_map)
 
 	bpy.types.Scene.leafify_offset = bpy.props.FloatVectorProperty(
-		name        = "LeafifyOffset",
+		name        = "Transformation Offset",
 		default     = (0.0, 0.0, 0.0),
 		subtype     = "TRANSLATION",
-		description = "Offset between faces",
+		description = "Offset between faces.",
 		min         = 0.0,
 		soft_min    = 0.0
-		)
+	)
+
+	bpy.types.Scene.leafify_normal = bpy.props.BoolProperty(
+		name        = "Respect Normals",
+		default     = False,
+		description = "Transform with respect to face normals."
+	)
+
+	bpy.types.Scene.leafify_preflip = bpy.props.BoolProperty(
+		name        = "Preflip Normals",
+		default     = True,
+		description = "Flip original face normals before running leafify."
+	)
+
 
 def unregister():
 	bpy.utils.unregister_module(__name__)
