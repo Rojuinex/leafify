@@ -75,40 +75,32 @@ class OBJECT_OT_leafify(bpy.types.Operator):
 	# end of draw
 
 	def action_common(self, context):
-		if self.leafify_offset == Vector((0.0, 0.0, 0.0)) and not self.leafify_allow_zero:
-			self.report({"ERROR"}, "Please use non-zero values.")
-		else :
-			if self.leafify_preflip == True:
-				bpy.ops.mesh.flip_normals()
-
-			offset = self.leafify_offset
-
-			orientation = "GLOBAL"
-
-			if self.leafify_normal == True:
-				orientation = "NORMAL"
-
-			bpy.ops.mesh.duplicate_move(
-				MESH_OT_duplicate      = {"mode":1}, 
-				TRANSFORM_OT_translate = {
-					"value":                      offset,
-					"constraint_axis":            (False, False, False),
-					"constraint_orientation":     orientation,
-					"mirror":                     False,
-					"proportional":               "DISABLED",
-					"proportional_edit_falloff":  "SMOOTH",
-					"proportional_size":          1, 
-					"snap":                       False,
-					"snap_target":                "CLOSEST",
-					"snap_point":                 (0, 0, 0),
-					"snap_align":                 False,
-					"snap_normal":                (0, 0, 0),
-					"texture_space":              False,
-					"release_confirm":            False
-					}
-			)
-
+		if self.leafify_preflip == True:
 			bpy.ops.mesh.flip_normals()
+
+		offset = self.leafify_offset
+
+		bpy.ops.mesh.duplicate_move(
+			MESH_OT_duplicate      = {"mode":1}, 
+			TRANSFORM_OT_translate = {
+				"value":                      offset,
+				"constraint_axis":            (False, False, False),
+				"constraint_orientation":     "GLOBAL",
+				"mirror":                     False,
+				"proportional":               "DISABLED",
+				"proportional_edit_falloff":  "SMOOTH",
+				"proportional_size":          1, 
+				"snap":                       False,
+				"snap_target":                "CLOSEST",
+				"snap_point":                 (0, 0, 0),
+				"snap_align":                 False,
+				"snap_normal":                (0, 0, 0),
+				"texture_space":              False,
+				"release_confirm":            False
+				}
+		)
+
+		bpy.ops.mesh.flip_normals()
 	# end of action_common
 
 	def execute(self, context):
@@ -117,10 +109,6 @@ class OBJECT_OT_leafify(bpy.types.Operator):
 	# end of execute
 
 	def invoke(self, context, event):
-		self.leafify_offset     = context.scene.leafify_offset
-		self.leafify_normal     = context.scene.leafify_normal
-		self.leafify_preflip    = context.scene.leafify_preflip
-		self.leafify_allow_zero = context.scene.leafify_allow_zero
 		self.action_common(context)
 		return {"FINISHED"}
 	# end of invoke
@@ -128,20 +116,14 @@ class OBJECT_OT_leafify(bpy.types.Operator):
 class LeafifyPanel(bpy.types.Panel):
 	"""Options for Leafify"""
 
-	bl_label       = "Leafify options"
+	bl_label       = "Leafify"
 	bl_idname      = "OBJECT_PT_leafify_props"
 	bl_space_type  = "VIEW_3D"
 	bl_region_type = "TOOLS"
 	bl_context     = "mesh_edit"
 
 	def draw(self, context):
-		layout = self.layout
-		col    = layout.column()
-		col.label("Plese use a non-zero vector.", icon='NONE')
-		col.prop(context.scene, "leafify_preflip")
-		col.prop(context.scene, "leafify_offset")
-		col.prop(context.scene, "leafify_allow_zero")
-		row    = layout.row()
+		row    = self.layout.row()
 		row.operator("mesh.leafify", icon = "UV_VERTEXSEL")
 
 def add_object_manual_map():
@@ -155,28 +137,6 @@ def add_object_manual_map():
 def register():
 	bpy.utils.register_module(__name__)
 	bpy.utils.register_manual_map(add_object_manual_map)
-
-	bpy.types.Scene.leafify_offset  = bpy.props.FloatVectorProperty(
-		name        = "Transformation Offset",
-		default     = (0.0, 0.0, 0.0),
-		subtype     = "TRANSLATION",
-		description = "Offset between faces.",
-		#min         = 0.0,
-		soft_min    = 0.0
-	)
-
-	bpy.types.Scene.leafify_preflip = bpy.props.BoolProperty(
-		name        = "Flip Original Normals",
-		default     = True,
-		description = "Flip original face normals"
-	)
-
-	bpy.types.Scene.leafify_allow_zero = bpy.props.BoolProperty(
-		name        = "Allow Zero",
-		default     = False,
-		description = "Don't warn about non-zero values."
-	)
-
 
 def unregister():
 	bpy.utils.unregister_module(__name__)
