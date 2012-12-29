@@ -1,5 +1,5 @@
 # Author: Rojuienx <rojuinex@gmail.com http://github.com/rojuinex>
-# Version: 0.0.3
+# Version: 0.1.0
 # Date Created: December 28th, 2012
 # Copyright (c) 2012, Rojuinex (See license agreement)
 
@@ -12,7 +12,7 @@
 bl_info = {
 	"name":         "Leafify", 
 	"author":       "Rojuienx <rojuinex@gmail.com>",
-	"version":      (0, 0, 3),
+	"version":      (0, 1, 0),
 	"blender":      (2, 6, 5),
 	"location":     "View3D > Tools",
 	"description":  "Creates double sided faces.  Located in toolshelf and spacebar leafify",
@@ -38,8 +38,6 @@ class OBJECT_OT_leafify(bpy.types.Operator):
 		default     = (0.0, 0.0, 0.0),
 		subtype     = "TRANSLATION",
 		description = "Offset between faces.",
-		#min         = 0.0,
-		soft_min    = 0.0
 	)
 
 	leafify_preflip = bpy.props.BoolProperty(
